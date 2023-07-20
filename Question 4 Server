@@ -1,0 +1,38 @@
+import socket
+import threading
+import random
+
+QUOTES = [
+    "You do not find the happy life, you make it. - Camilla Eyring Kimball",
+    "To err is human; to forgive, divine. - Alexander Pope",
+     "I'm not interested in money. I just want to be wonderful. - Marilyn Monroe",
+    "If you can dream it, you can do it. - Walt Disney",
+    "You can have anything you want if you are willing to give up everything you have. - Oprah Winfrey”,
+    "Everything happens for a reason. - Unknown",
+    "You only live once, but if you do it right, once is enough. - Mae West"
+]
+
+def handle_client(client_socket):
+    random_quote = random.choice(QUOTES).encode()
+    client_socket.send(random_quote)
+    client_socket.close()
+
+def main():
+    host = "192.168.213.128"
+    port = 8888
+
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind((host, port))
+    server_socket.listen(5)
+
+    print("QOTD Server is listening on port", port)
+
+    while True:
+        client_socket, client_addr = server_socket.accept()
+        print("Connection accepted from", client_addr)
+
+        client_handler = threading.Thread(target=handle_client, args=(client_socket,))
+        client_handler.start()
+
+if __name__ == "__main__":
+    main()
